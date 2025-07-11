@@ -50,7 +50,10 @@ float temperatura;
 
 void Etapas(float lec1, float lec2, float lec3, float lec4);
 String etapa;
-void emergencias ();
+void emergencias (float emer1, float emer2, float emer3);
+
+#define BOMBA_AGUA 23
+#define MOTOR 15
 
 void setup() {
   Serial.begin(9600);
@@ -99,8 +102,29 @@ void Etapas(float lec1, float lec2, float lec3, float lec4){
   }
 }
 
-void emergencias(){
-  
+void emergencias(float emer1, float emer2, float emer3){
+  tiempoAhora = millis();
+  if(emer1 >= 1500){
+    digitalWrite(MOTOR, HIGH);
+    if(tiempoAhora - tiempoUltimoCambio >= 60000){
+      tiempoUltimoCambio = tiempoAhora;
+    }
+  }
+ if(emer2 <= 4.5){
+  digitalWrite(BOMBA_AGUA, HIGH);
+  Serial.println("Material verde es necesitado");
+ }
+ if(emer2 >= 8.5){
+  Serial.println("Material secante es necesitado");
+ }
+
+ if(emer3 < 35){
+  Serial.println("Humedad insuficiente");
+  digitalWrite(BOMBA_AGUA, HIGH);
+ }
+ if(emer3 > 70){
+  digitalWrite(MOTOR, HIGH);
+ }
 }
 
 float promedioHumedad(){
@@ -114,5 +138,5 @@ float promedioHumedad(){
     tiempoUltimoCambio = tiempoAhora;
     promedio = lecturaTotal / 15;
   }
-  return promedio
+  return promedio ;
 }
